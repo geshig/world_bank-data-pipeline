@@ -1,0 +1,76 @@
+# World Bank Economic Indicators - Data Pipeline
+
+End-to-end ETL pipeline that extracts economic data from the World Bank API, transforms it with Python/pandas, loads it into a SQLite database with star schema design, performs SQL analysis, and visualizes insights in Power BI.
+
+## Project Overview
+
+This project demonstrates a complete data engineering workflow relevant to credit risk and financial analytics — extracting macroeconomic indicators (GDP per capita, inflation, unemployment) for 15 countries across 15 years (2010-2024) and building a production-ready analytical pipeline.
+
+**Why these indicators?** GDP, inflation, and unemployment are foundational inputs for credit risk modeling — they signal economic health, purchasing power, and default probability at a national level.
+
+## Tech Stack
+
+- **Python** (requests, pandas, sqlalchemy) — extraction and transformation
+- **SQLite** — analytical database with star schema
+- **SQL** — analytical queries (CTEs, window functions, JOINs)
+- **Power BI** — interactive dashboard
+- **GitHub** — version control
+
+## Architecture
+
+World Bank API → Python (requests) → pandas (transform) → SQLite (star schema) → SQL Analysis → Power BI Dashboard
+
+## Pipeline Steps
+
+### 1. Extract
+Python script makes 45 API calls (15 countries × 3 indicators) to World Bank API with rate limiting and error handling. Returns 675 records.
+
+### 2. Transform
+- Convert nested JSON to flat structure
+- Data quality checks (missing values, duplicates, type validation)
+- Pivot from long to wide format for analytics
+- Save intermediate CSV outputs
+
+### 3. Load
+- Design star schema (1 fact + 2 dimension tables)
+- Replace natural keys with surrogate keys
+- Load into SQLite with foreign key relationships
+- Create indexes on FK columns and year for query performance
+
+### 4. SQL Analysis
+Three production-quality queries demonstrating:
+- **Query 1:** Bulgaria economic trajectory with year-over-year GDP growth (CTE + LAG window function)
+- **Query 2:** Inflation comparison 2022 vs 2019 (CASE pivot + RANK window function)
+- **Query 3:** Top 5 richest countries vs European average (CTE + subquery benchmark)
+
+### 5. Visualize
+Interactive Power BI dashboard with:
+- KPI cards (GDP, Inflation, Unemployment for 2024)
+- Line chart: GDP per capita trend 2010-2024 across all countries
+- Bar chart: Country ranking by GDP 2024
+- Country slicer for cross-filtering
+
+## Key Insights from the Data
+
+- **Ireland** leads in GDP per capita ($112K in 2024) due to corporate tax structures
+- **Turkey** experienced extreme inflation (72% in 2022) — outlier driven by monetary policy
+- **Bulgaria's GDP per capita** more than doubled from 2015 to 2024 ($7K → $17K)
+- **Eastern Europe** uniformly hit by 2022 energy crisis (14-15% inflation across the region)
+- COVID impact visible across all economies (2020 GDP dip, recovery 2021)
+
+## Dashboard Preview
+
+![Dashboard](powerbi/World_Bank_POWERBI_ss.png)
+
+## Running the Pipeline
+
+1. Install dependencies: `pip install requests pandas sqlalchemy`
+2. Run the notebook: `scripts/01_extract_worldbank_data.ipynb`
+3. Open SQL files in DB Browser for SQLite to query the database
+4. Open `powerbi/economic_dashboard.pbix` in Power BI Desktop
+
+## Author
+
+**Georgi Terziev** — Ambitious Data Engineer | [LinkedIn](https://www.linkedin.com/in/georgi-terziev-7980b4403/)
+
+Built as a portfolio project demonstrating end-to-end data engineering workflow.
